@@ -2,7 +2,7 @@ const db = require("../db/client");
 
 const retrieve_all_posts = async (req, res) => {
   try {
-    const { rows: posts, rowCount } = await db.query("SELECT * FROM posts;");
+    const { rows: posts, rowCount } = await db.query(`SELECT * FROM posts;`);
 
     if (!rowCount) return res.status(404).send("No posts found");
 
@@ -21,13 +21,13 @@ const create_new_post = async (req, res) => {
       rows: [newPost],
       rowCount,
     } = await db.query(
-      "INSERT INTO posts (id, author_id, title, image, body, tag_id)  VALUES $1, $2, $3, $4, $5, $6  RETURNING *;",
+      "INSERT INTO posts (author_id, title, image, body, tag_id, source_link)  VALUES ($1, $2, $3, $4, $5, $6)  RETURNING *;",
       [author_id, title, image, body, tag_id, source_link]
     );
 
-    if (!rowCount) return res.status(404).send(newPost);
+    if (!rowCount) return res.status(404).send("Something went wrong");
 
-    return res.status(200).send("test");
+    return res.status(200).send(newPost);
   } catch (err) {
     console.log(err);
     return res.status(500).send("Sometging went wrong");
