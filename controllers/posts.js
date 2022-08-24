@@ -1,6 +1,6 @@
 const db = require("../db/client");
 
-const retrieve_all_posts = async (req, res) => {
+const retrieve_all_posts = async (req, res, next) => {
   try {
     const { rows: posts, rowCount } = await db.query(`SELECT * FROM posts;`);
 
@@ -8,12 +8,29 @@ const retrieve_all_posts = async (req, res) => {
 
     return res.status(200).send(posts);
   } catch (err) {
-    console.log(err);
-    return res.status(500).send("Something went wrong");
+    next(err);
   }
 };
 
-const create_new_post = async (req, res) => {
+const retrieve_one_post = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const {
+      rows: [onePost],
+      rowCount,
+    } = await db.query("SELECT * FROM posts  WHERE id=$1;", []);
+
+    if (!rowCount)
+      return res.status(404).send(`The post with id ${id} does not exist`);
+
+    return res.status(200).send(onePost);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const create_new_post = async (req, res, next) => {
   const { author_id, title, image, body, tag_id, source_link } = req.body;
 
   try {
@@ -29,31 +46,11 @@ const create_new_post = async (req, res) => {
 
     return res.status(200).send(newPost);
   } catch (err) {
-    console.log(err);
-    return res.status(500).send("Sometging went wrong");
+    next(err);
   }
 };
 
-const retrieve_one_post = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const {
-      rows: [onePost],
-      rowCount,
-    } = await db.query("SELECT * FROM posts  WHERE id=$1;", [id]);
-
-    if (!rowCount)
-      return res.status(404).send(`The post with id ${id} does not exist`);
-
-    return res.status(200).send(onePost);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).send("Sometging went wrong");
-  }
-};
-
-const update_entire_post = async (req, res) => {
+const update_entire_post = async (req, res, next) => {
   const { id } = req.params;
   const { author_id, title, image, body, tag_id, source_link } = req.body;
 
@@ -71,12 +68,11 @@ const update_entire_post = async (req, res) => {
 
     return res.status(200).send(updatedPost);
   } catch (err) {
-    console.log(err);
-    return res.status(500).send("Sometging went wrong");
+    next(err);
   }
 };
 
-const update_one_field_of_post = async (req, res) => {
+const update_one_field_of_post = async (req, res, next) => {
   const { id } = req.params;
   const [key, value] = Object.entries(req.body)[0];
 
@@ -88,7 +84,7 @@ const update_one_field_of_post = async (req, res) => {
     const {
       rows: [updatedPost],
       rowCount,
-    } = await db.query("UPDATE posts SET ${key}=$1 WHERE id=$2 RETURNING *;", [
+    } = await db.query(`UPDATE posts SET ${key}=$1 WHERE id=$2 RETURNING *;`, [
       value,
       id,
     ]);
@@ -98,12 +94,11 @@ const update_one_field_of_post = async (req, res) => {
 
     return res.status(200).send(updatedPost);
   } catch (err) {
-    console.log(err);
-    return res.status(500).send("Sometging went wrong");
+    next(err);
   }
 };
 
-const delete_one_post = async (req, res) => {
+const delete_one_post = async (req, res, next) => {
   const { id } = req.params;
 
   try {
@@ -117,8 +112,7 @@ const delete_one_post = async (req, res) => {
 
     return res.status(200).send(deletedPost);
   } catch (err) {
-    console.log(err);
-    return res.status(500).send("Sometging went wrong");
+    next(err);
   }
 };
 

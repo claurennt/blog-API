@@ -1,11 +1,6 @@
 const db = require("../db/client");
 const retrieve_all_posts_by_tag = async (req, res) => {
-  const { tag_name } = req.query;
-
-  if (!tag_name)
-    return res
-      .status(400)
-      .send("Please provide query strings <code>?tag_name=value</code>");
+  const { tag } = req.query;
 
   try {
     const { rows: allPostsByTag, rowCount } = await db.query(
@@ -14,7 +9,7 @@ const retrieve_all_posts_by_tag = async (req, res) => {
       JOIN authors on authors.id = posts.author_id 
       FULL JOIN tags on tags.id = posts.tag_id
         WHERE tags.name=$1 `,
-      [tag_name]
+      [tag]
     );
 
     if (!rowCount)
