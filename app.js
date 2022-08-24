@@ -17,7 +17,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api/posts", postsRouter);
-app.use("/authors", authorsRouter);
-app.use("/tags", tagsRouter);
+app.use("/api/authors", authorsRouter);
+app.use("/api/tags", tagsRouter);
 
 module.exports = app;
