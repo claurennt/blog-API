@@ -16,9 +16,6 @@ const retrieve_all_posts = async (req, res) => {
 const create_new_post = async (req, res) => {
   const { author_id, title, image, body, tag_id, source_link } = req.body;
 
-  if (!author_id || !title || !image || !body || !tag_id || source_link)
-    return res.status(400).send("Missing required fields");
-
   try {
     const {
       rows: [newPost],
@@ -28,9 +25,9 @@ const create_new_post = async (req, res) => {
       [author_id, title, image, body, tag_id, source_link]
     );
 
-    if (!rowCount) return res.status(404).send("No posts were created");
+    if (!rowCount) return res.status(404).send(newPost);
 
-    return res.status(200).send(newPost);
+    return res.status(200).send("test");
   } catch (err) {
     console.log(err);
     return res.status(500).send("Sometging went wrong");
@@ -59,9 +56,6 @@ const retrieve_one_post = async (req, res) => {
 const update_entire_post = async (req, res) => {
   const { id } = req.params;
   const { author_id, title, image, body, tag_id, source_link } = req.body;
-
-  if (!author_id || !title || !image || !body || !tag_id || source_link)
-    return res.status(400).send("Missing required fields");
 
   try {
     const {
