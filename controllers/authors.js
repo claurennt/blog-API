@@ -19,8 +19,7 @@ FULL JOIN tags on tags.id = posts.tag_id
 
     return res.status(200).send(allPostsByAuthor);
   } catch (err) {
-    console.log(err);
-    return res.status(500).send("Sometging went wrong");
+    next(err);
   }
 };
 

@@ -8,6 +8,8 @@ const postsRouter = require("./routes/posts");
 const authorsRouter = require("./routes/authors");
 const tagsRouter = require("./routes/tags");
 
+const errorHandler = require("./middlewares/errorHandler");
+
 const app = express();
 
 app.use(logger("dev"));
@@ -20,4 +22,5 @@ app.use("/api/posts", postsRouter);
 app.use("/api/authors", authorsRouter);
 app.use("/api/tags", tagsRouter);
 
+app.use(errorHandler);
 module.exports = app;
